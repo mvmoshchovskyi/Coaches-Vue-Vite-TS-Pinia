@@ -2,7 +2,6 @@
 import { computed } from 'vue';
 import { useCoachStore } from '@/stores/coaches.ts';
 import CoachItem from '@/components/coaches/CoachItem.vue';
-import BaseButton from '@/components/ui/BaseButton.vue';
 
 const { coaches, hasCoaches } = useCoachStore();
 

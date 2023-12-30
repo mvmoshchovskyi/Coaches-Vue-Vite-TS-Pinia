@@ -2,8 +2,6 @@
 import { computed } from 'vue'
 import { ICoach } from '@/models/coaches.models.ts';
 import { useRouter } from 'vue-router'
-import BaseButton from '@/components/ui/BaseButton.vue';
-import BaseBadge from '@/components/ui/BaseBadge.vue';
 
 const props = defineProps<{
 	coach: ICoach
@@ -12,7 +10,7 @@ const props = defineProps<{
 const {firstName, lastName, hourlyRate, areas, id} = props.coach;
 
 const fullName = computed(() => {
-	return firstName + lastName;
+	return firstName + ' ' + lastName;
 });
 
 const router = useRouter();
