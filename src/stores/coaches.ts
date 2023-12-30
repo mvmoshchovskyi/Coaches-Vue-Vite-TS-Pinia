@@ -17,7 +17,7 @@ export const useCoachStore = defineStore('coaches', {
 					id: 'c2',
 					firstName: 'Vova',
 					lastName: 'Mosh',
-					areas: [Areas.PM, Areas.FullStack],
+					areas: [Areas.Career, Areas.Frontend],
 					description: 'I am very success',
 					hourlyRate: 40,
 				}
@@ -28,7 +28,7 @@ export const useCoachStore = defineStore('coaches', {
 		hasCoaches: (state: ICoaches) => state.coaches && state.coaches.length > 0,
 	},
 	actions: {
-		increment() {
+		getCoaches() {
 		},
 	},
 })

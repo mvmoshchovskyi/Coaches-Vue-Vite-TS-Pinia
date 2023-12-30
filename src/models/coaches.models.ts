@@ -1,8 +1,7 @@
 export enum Areas {
-	Frontend,
-	Backend,
-	FullStack,
-	PM
+	Frontend ='frontend',
+	Backend = 'backend',
+	Career = 'career',
 }
 
 export interface ICoach {
