@@ -3,7 +3,7 @@
 </script>
 
 <template>
-
+Register
 </template>
 
 <style scoped>

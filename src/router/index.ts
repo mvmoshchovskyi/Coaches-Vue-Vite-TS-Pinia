@@ -2,8 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router';
 const CoachesList = (): any => import('@/pages/coaches/CoachesList.vue');
 const CoachDetail = (): any => import('@/pages/coaches/CoachDetail.vue');
 const CoachRegistration = (): any => import('@/pages/coaches/CoachRegistration.vue');
-const ContactCoach = (): any => import('@/pages/request/ContactCoach.vue');
-const RequestReceived = (): any => import('@/pages/request/RequestReceived.vue');
+const ContactCoach = (): any => import('@/pages/requests/ContactCoach.vue');
+const RequestReceived = (): any => import('@/pages/requests/RequestsReceived.vue');
 const NotFound = (): any => import('@/pages/NotFound.vue');
 
 const router = createRouter({
@@ -17,7 +17,7 @@ const router = createRouter({
 			]
 		},
 		{ path: '/register', component: CoachRegistration },
-		{ path: '/request', component: RequestReceived },
+		{ path: '/requests', component: RequestReceived },
 		{ path: '/:notFound(.*)', component: NotFound },
 	]
 });
