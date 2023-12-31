@@ -1,61 +1,119 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { reactive, ref } from 'vue';
 
 const emit = defineEmits(['save-data']);
 
-const firstName = ref('');
-const lastName = ref('');
-const description = ref('');
-const rate = ref(null);
-const areas = ref([]);
+const firstName = reactive({
+	val: '',
+	isValid: true,
+});
+const lastName = reactive({
+	val: '',
+	isValid: true,
+});
+const description = reactive({
+	val: '',
+	isValid: true,
+});
+const rate = reactive({
+	val: null,
+	isValid: true,
+});
+const areas = reactive({
+	val: [],
+	isValid: true,
+});
 
-const submitForm = () => {
+const formIsValid = ref(true);
+
+const clearValidity = (data) => {
+	[data].isValid = true;
+};
+
+const validateForm = () => {
+	formIsValid.value = true;
+	if (firstName.val === '') {
+		firstName.isValid = false;
+		formIsValid.value = false;
+	}
+	if (lastName.val === '') {
+		lastName.isValid = false;
+		formIsValid.value = false;
+	}
+	if (description.val === '') {
+		description.isValid = false;
+		formIsValid.value = false;
+	}
+	if (!rate.val || rate.val < 1) {
+		rate.isValid = false;
+		rate.value = false;
+	}
+	if (areas.val.length === 0) {
+		areas.isValid = false;
+		formIsValid.value = false;
+	}
+
+};
+
+const submitForm = async () => {
+	await validateForm();
+
+	if (!formIsValid.value) {
+		return;
+	}
+
 	const formData = {
-		first: firstName,
-		last: lastName,
-		desc: description,
-		rate,
-		areas
+		first: firstName.val,
+		last: lastName.val,
+		desc: description.val,
+		rate: rate.val,
+		areas: areas.val
 	}
 
 	emit('save-data', formData);
-}
+};
 
 </script>
 
 <template>
 	<form @submit.prevent="submitForm">
-		<div class="form-control">
+		<div class="form-control" :class="{invalid: !firstName.isValid}">
 			<label for="firstname">First Name</label>
-			<input type="text" id="firstname" v-model.trim="firstName">
+			<input type="text" id="firstname" v-model.trim="firstName.val" @blur="clearValidity(firstName)">
+			<p v-if="!firstName.isValid">Firstname must not be empty.</p>
 		</div>
-		<div class="form-control">
+		<div class="form-control" :class="{invalid: !lastName.isValid}">
 			<label for="lastname">Last Name</label>
-			<input type="text" id="lastname" v-model.trim="lastName">
+			<input type="text" id="lastname" v-model.trim="lastName.val" @blur="clearValidity(lastName)">
+			<p v-if="!lastName.isValid">Lastname must not be empty.</p>
 		</div>
-		<div class="form-control">
+		<div class="form-control" :class="{invalid: !description.isValid}" @blur="clearValidity">
 			<label for="description">Description</label>
-			<textarea id="description" v-model.trim="description"></textarea>
+			<textarea id="description" v-model.trim="description.val" @blur="clearValidity(description)"></textarea>
+			<p v-if="!description.isValid">Description must not be empty.</p>
 		</div>
-		<div class="form-control">
+		<div class="form-control" :class="{invalid: !rate.isValid}">
 			<label for="rate">Hourly Rate</label>
-			<input type="number" id="rate" v-model.number="rate">
+			<input type="number" id="rate" v-model.number="rate.val" @blur="clearValidity(rate)">
+			<p v-if="!rate.isValid">Hourly Rate must be grater than 0.</p>
 		</div>
-		<div class="form-control">
+		<div class="form-control" :class="{invalid: !areas.isValid}">
 			<h3>Areas of Expertise</h3>
 			<div>
-				<input type="checkbox" id="frontend" value="frontend" v-model="areas">
+				<input type="checkbox" id="frontend" value="frontend" v-model="areas.val" @blur="clearValidity(areas)">
 				<label for="frontend">Frontend Development</label>
 			</div>
 			<div>
-				<input type="checkbox" id="backend" value="backend" v-model="areas">
+				<input type="checkbox" id="backend" value="backend" v-model="areas.val" @blur="clearValidity(areas)">
 				<label for="backend">Backend Development</label>
 			</div>
 			<div>
-				<input type="checkbox" id="career" value="career" v-model="areas">
+				<input type="checkbox" id="career" value="career" v-model="areas.val" @blur="clearValidity(areas)">
 				<label for="career">Career Advisory</label>
 			</div>
+			<p v-if="!areas.isValid">At least one expertise must be selected.</p>
 		</div>
+		<p v-if="!formIsValid">Please fix the error above.</p>
 		<base-button>
 			Register
 		</base-button>
