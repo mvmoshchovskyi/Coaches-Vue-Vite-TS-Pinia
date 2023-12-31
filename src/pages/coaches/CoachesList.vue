@@ -5,7 +5,7 @@ import CoachItem from '@/components/coaches/CoachItem.vue';
 import CoachFilter from '@/components/coaches/CoachFilter.vue';
 import { Areas, IFilters } from '@/models/coaches.models.ts';
 
-const { coaches, hasCoaches } = useCoachStore();
+const { coaches, hasCoaches, isCoach } = useCoachStore();
 
 const activeFilters = reactive<IFilters>({
 	backend: true,
@@ -56,6 +56,7 @@ const setFilter = (updatedFilter: IFilters) => {
 					Refresh
 				</base-button>
 				<base-button
+					v-if="!isCoach"
 					:link="true"
 					to="/register"
 				>

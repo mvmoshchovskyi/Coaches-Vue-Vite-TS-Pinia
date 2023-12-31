@@ -2,8 +2,6 @@
 import { reactive } from 'vue';
 import { IFilters } from '@/models/coaches.models.ts';
 
-
-
 const emit = defineEmits(['change-filter']);
 
 const filters = reactive<IFilters>({

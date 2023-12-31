@@ -1,5 +1,6 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
-import { ICoaches, Areas } from '@/models/coaches.models.ts';
+import { ICoaches, Areas, ICoach } from '@/models/coaches.models.ts';
+import { useUserStore } from '@/stores/user.ts';
 
 export const useCoachStore = defineStore('coaches', {
 	state: (): ICoaches => {
@@ -26,10 +27,31 @@ export const useCoachStore = defineStore('coaches', {
 	},
 	getters: {
 		hasCoaches: (state: ICoaches) => state.coaches && state.coaches.length > 0,
+
+		isCoach: (state: ICoaches) => {
+			const { userId} = useUserStore();
+			return state.coaches.some((coach) => coach.id === userId);
+		},
+
 	},
 	actions: {
-		getCoaches() {
+		addCoaches(newCoaches: ICoach) {
+			this.coaches.push(newCoaches)
 		},
+
+		registerCoaches(data: any) {
+			const { userId} = useUserStore();
+			const coachData: ICoach = {
+				id: userId,
+				firstName: data.first,
+				lastName: data.last,
+				areas: data.areas,
+				description: data.desc,
+				hourlyRate: data.rate,
+			} as ICoach
+
+			this.addCoaches(coachData);
+		}
 	},
 })
 

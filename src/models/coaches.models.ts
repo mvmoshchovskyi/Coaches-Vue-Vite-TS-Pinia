@@ -4,6 +4,12 @@ export enum Areas {
 	Career = 'career',
 }
 
+export interface IFilters {
+	[Areas.Career]: boolean;
+	[Areas.Frontend]: boolean,
+	[Areas.Backend]: boolean,
+}
+
 export interface ICoach {
 	id: string;
 	firstName: string;
@@ -17,8 +23,3 @@ export interface ICoaches {
 	coaches: ICoach[]
 }
 
-export interface IFilters {
-	[Areas.Career]: boolean;
-	[Areas.Frontend]: boolean,
-	[Areas.Backend]: boolean,
-}
