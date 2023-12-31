@@ -16,3 +16,9 @@ export interface ICoach {
 export interface ICoaches {
 	coaches: ICoach[]
 }
+
+export interface IFilters {
+	[Areas.Career]: boolean;
+	[Areas.Frontend]: boolean,
+	[Areas.Backend]: boolean,
+}

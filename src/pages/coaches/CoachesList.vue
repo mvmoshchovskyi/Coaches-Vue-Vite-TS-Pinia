@@ -1,19 +1,51 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, reactive } from 'vue';
 import { useCoachStore } from '@/stores/coaches.ts';
 import CoachItem from '@/components/coaches/CoachItem.vue';
+import CoachFilter from '@/components/coaches/CoachFilter.vue';
+import { Areas, IFilters } from '@/models/coaches.models.ts';
 
 const { coaches, hasCoaches } = useCoachStore();
 
+const activeFilters = reactive<IFilters>({
+	backend: true,
+	frontend: true,
+	career: true,
+});
+
+// const filteredCoaches = computed(() => {
+// 	return coaches.filter((coach) => {
+// 		if (activeFilters.frontend && coach.areas.includes(Areas.Frontend)) {
+// 			return true;
+// 		}
+// 		if (activeFilters.backend && coach.areas.includes(Areas.Backend)) {
+// 			return true;
+// 		}
+// 		if (activeFilters.career && coach.areas.includes(Areas.Career)) {
+// 			return true;
+// 		}
+// 		return false;
+// 	});
+// });
+
 const filteredCoaches = computed(() => {
-	return coaches;
-})
+	return coaches.filter((coach) => {
+		return Object.keys(activeFilters).some((filter) => {
+			return activeFilters[filter as Areas]
+				&& coach.areas.includes(filter as Areas);
+		});
+	});
+});
+
+const setFilter = (updatedFilter: IFilters) => {
+	Object.assign(activeFilters, updatedFilter);
+};
 
 </script>
 
 <template>
 	<section>
-		Filter
+		<coach-filter @change-filter="setFilter"></coach-filter>
 	</section>
 	<section>
 		<base-card>
