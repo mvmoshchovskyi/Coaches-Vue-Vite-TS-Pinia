@@ -1,5 +1,6 @@
 import { acceptHMRUpdate, defineStore } from 'pinia';
 import { IRequest, IRequests } from '@/models/requests.model.ts';
+import { useUserStore } from '@/stores/user.ts';
 
 export const useRequestsStore = defineStore('requests', {
 	state: (): IRequests => {
@@ -8,9 +9,15 @@ export const useRequestsStore = defineStore('requests', {
 		}
 	},
 	getters: {
-		hasRequests(state) {
-			return state.requests && state.requests.length > 0;
-		}
+		filteredRequests(state) {
+			const { userId} = useUserStore();
+			return state.requests.filter(req => req.coachId === userId);
+		},
+
+		hasRequests() {
+			return this.filteredRequests && this.filteredRequests.length > 0;
+		},
+
 	},
 	actions: {
 		addRequests(request: IRequest) {

@@ -24,7 +24,7 @@ const submitForm = () => {
 	contactCoach({
 		email,
 		message,
-		id: route?.id
+		coachId: route?.params.id
 	})
 
 	router.replace('/coaches');

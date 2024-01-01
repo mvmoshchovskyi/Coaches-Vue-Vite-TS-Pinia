@@ -6,7 +6,7 @@ export const useUserStore = defineStore('user', {
 		return {
 			userId: 'c3'
 		}
-	}
+	},
 })
 
 if (import.meta.hot) {

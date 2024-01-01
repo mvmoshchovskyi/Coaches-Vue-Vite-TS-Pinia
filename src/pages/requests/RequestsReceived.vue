@@ -2,7 +2,7 @@
 import { useRequestsStore } from '@/stores/requests.ts';
 import RequestsItem from '@/components/requests/RequestsItem.vue';
 
-const {requests, hasRequests} = useRequestsStore();
+const { filteredRequests, hasRequests } = useRequestsStore();
 
 </script>
 
@@ -14,7 +14,7 @@ const {requests, hasRequests} = useRequestsStore();
 			</header>
 			<ul v-if="hasRequests">
 				<requests-item
-					v-for="request in requests"
+					v-for="request in filteredRequests"
 					:id="request.id"
 					:email="request.userEmail"
 					:message="request.message">
