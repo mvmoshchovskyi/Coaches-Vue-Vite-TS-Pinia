@@ -1,17 +1,21 @@
 <script setup lang="ts">
-import { computed, reactive } from 'vue';
+import { computed, reactive,onMounted  } from 'vue';
 import { useCoachStore } from '@/stores/coaches.ts';
 import CoachItem from '@/components/coaches/CoachItem.vue';
 import CoachFilter from '@/components/coaches/CoachFilter.vue';
 import { Areas, IFilters } from '@/models/coaches.models.ts';
 
-const { coaches, hasCoaches, isCoach } = useCoachStore();
+const { coaches, hasCoaches, isCoach, loadCoaches } = useCoachStore();
 
 const activeFilters = reactive<IFilters>({
 	backend: true,
 	frontend: true,
 	career: true,
 });
+
+onMounted(async () => {
+	await loadCoaches();
+})
 
 // const filteredCoaches = computed(() => {
 // 	return coaches.filter((coach) => {
@@ -52,6 +56,7 @@ const setFilter = (updatedFilter: IFilters) => {
 			<div class="controls">
 				<base-button
 					mode="outline"
+					@click="loadCoaches"
 				>
 					Refresh
 				</base-button>

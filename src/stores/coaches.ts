@@ -1,27 +1,28 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
-import { ICoaches, Areas, ICoach } from '@/models/coaches.models.ts';
+import { ICoaches, ICoach } from '@/models/coaches.models.ts';
 import { useUserStore } from '@/stores/user.ts';
 
+const url = import.meta.env.VITE_FIREBASE_HTTP_COACHES;
 export const useCoachStore = defineStore('coaches', {
 	state: (): ICoaches => {
 		return {
 			coaches: [
-				{
-					id: 'c1',
-					firstName: 'Misha',
-					lastName: 'Mosh',
-					areas: [Areas.Frontend, Areas.Backend,],
-					description: 'I am very happy',
-					hourlyRate: 30,
-				},
-				{
-					id: 'c2',
-					firstName: 'Vova',
-					lastName: 'Mosh',
-					areas: [Areas.Career, Areas.Frontend],
-					description: 'I am very success',
-					hourlyRate: 40,
-				}
+				// {
+				// 	id: 'c1',
+				// 	firstName: 'Misha',
+				// 	lastName: 'Mosh',
+				// 	areas: [Areas.Frontend, Areas.Backend,],
+				// 	description: 'I am very happy',
+				// 	hourlyRate: 30,
+				// },
+				// {
+				// 	id: 'c2',
+				// 	firstName: 'Vova',
+				// 	lastName: 'Mosh',
+				// 	areas: [Areas.Career, Areas.Frontend],
+				// 	description: 'I am very success',
+				// 	hourlyRate: 40,
+				// }
 			]
 		}
 	},
@@ -29,28 +30,67 @@ export const useCoachStore = defineStore('coaches', {
 		hasCoaches: (state: ICoaches) => state.coaches && state.coaches.length > 0,
 
 		isCoach: (state: ICoaches) => {
-			const { userId} = useUserStore();
+			const {userId} = useUserStore();
 			return state.coaches.some((coach) => coach.id === userId);
 		},
 
 	},
 	actions: {
-		addCoaches(newCoaches: ICoach) {
+		registerCoach(newCoaches: ICoach) {
 			this.coaches.push(newCoaches)
 		},
 
-		registerCoaches(data: any) {
-			const { userId} = useUserStore();
+		async loadCoaches() {
+
+			const response = await fetch(`${url}/coaches.json`);
+			const responseData = await response.json();
+
+			if (!response.ok) {
+				//error
+			}
+
+			const coaches = [];
+
+			for (const key in responseData) {
+				const coach = {
+					id: key,
+					firstName: responseData[key].firstName,
+					lastName: responseData[key].lastName,
+					description: responseData[key].description,
+					hourlyRate: responseData[key].hourlyRate,
+					areas: responseData[key].areas,
+				} as ICoach;
+
+				coaches.push(coach);
+			}
+
+			console.log(coaches)
+			this.coaches = coaches;
+		},
+
+		async registerCoaches(data: any) {
+			const {userId} = useUserStore();
 			const coachData: ICoach = {
 				id: userId,
 				firstName: data.first,
 				lastName: data.last,
-				areas: data.areas,
 				description: data.desc,
 				hourlyRate: data.rate,
+				areas: data.areas,
 			} as ICoach
 
-			this.addCoaches(coachData);
+			const response = await fetch(`${url}/coaches/${userId}.json`, {
+				method: 'PUT',
+				body: JSON.stringify(coachData),
+			});
+
+			// const responseData = await response.json();
+
+			if (!response.ok) {
+				//error
+			}
+
+			this.registerCoach({...coachData, id: userId});
 		}
 	},
 })
