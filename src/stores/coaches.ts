@@ -6,24 +6,7 @@ const url = import.meta.env.VITE_FIREBASE_HTTP_COACHES;
 export const useCoachStore = defineStore('coaches', {
 	state: (): ICoaches => {
 		return {
-			coaches: [
-				// {
-				// 	id: 'c1',
-				// 	firstName: 'Misha',
-				// 	lastName: 'Mosh',
-				// 	areas: [Areas.Frontend, Areas.Backend,],
-				// 	description: 'I am very happy',
-				// 	hourlyRate: 30,
-				// },
-				// {
-				// 	id: 'c2',
-				// 	firstName: 'Vova',
-				// 	lastName: 'Mosh',
-				// 	areas: [Areas.Career, Areas.Frontend],
-				// 	description: 'I am very success',
-				// 	hourlyRate: 40,
-				// }
-			]
+			coaches: [],
 		}
 	},
 	getters: {
@@ -84,10 +67,11 @@ export const useCoachStore = defineStore('coaches', {
 				body: JSON.stringify(coachData),
 			});
 
-			// const responseData = await response.json();
+			const responseData = await response.json();
 
 			if (!response.ok) {
-				//error
+				const error = new Error(responseData.message || 'Failed to fetch');
+				throw error;
 			}
 
 			this.registerCoach({...coachData, id: userId});
