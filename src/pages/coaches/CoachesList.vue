@@ -1,15 +1,20 @@
 <script setup lang="ts">
-import { computed, reactive, onMounted, ref } from 'vue';
+import { computed, reactive } from 'vue';
 import { useCoachStore } from '@/stores/coaches.ts';
 import CoachItem from '@/components/coaches/CoachItem.vue';
 import CoachFilter from '@/components/coaches/CoachFilter.vue';
 import { Areas, IFilters } from '@/models/coaches.models.ts';
 import BaseDialog from '@/components/ui/BaseDialog.vue';
+import { useFetch } from '@/hooks/useFetch.ts';
 
-const { coaches, hasCoaches, isCoach, loadCoaches } = useCoachStore();
+const url = import.meta.env.VITE_FIREBASE_HTTP_COACHES;
+const {data, isLoading, error} = await useFetch(`${url}/coaches.js`);
 
-const isLoading = ref(false);
-const error = ref(null);
+const {coaches, hasCoaches, isCoach, loadCoaches } = useCoachStore();
+
+if (data) {
+	loadCoaches(data.value)
+}
 
 const activeFilters = reactive<IFilters>({
 	backend: true,
@@ -20,16 +25,6 @@ const activeFilters = reactive<IFilters>({
 const showCoaches = computed(() => {
 	return !isLoading.value && hasCoaches;
 });
-
-const onLoadCoaches = async () => {
-	try {
-		isLoading.value = true;
-		await loadCoaches();
-	} catch (err) {
-		error.value = err?.message || 'Something went wrong';
-	}
-	isLoading.value = false;
-};
 
 const handleError = () => {
 	error.value = null;
@@ -66,7 +61,7 @@ const setFilter = (updatedFilter: IFilters) => {
 			<div class="controls">
 				<base-button
 					mode="outline"
-					@click="onLoadCoaches"
+					@click="loadCoaches"
 				>
 					Refresh
 				</base-button>

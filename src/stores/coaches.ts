@@ -23,15 +23,7 @@ export const useCoachStore = defineStore('coaches', {
 			this.coaches.push(newCoaches)
 		},
 
-		async loadCoaches() {
-
-			const response = await fetch(`${url}/coaches.json`);
-			const responseData = await response.json();
-
-			if (!response.ok) {
-				//error
-			}
-
+		loadCoaches(responseData: any) {
 			const coaches = [];
 
 			for (const key in responseData) {
@@ -47,7 +39,6 @@ export const useCoachStore = defineStore('coaches', {
 				coaches.push(coach);
 			}
 
-			console.log(coaches)
 			this.coaches = coaches;
 		},
 
@@ -62,7 +53,7 @@ export const useCoachStore = defineStore('coaches', {
 				areas: data.areas,
 			} as ICoach
 
-			const response = await fetch(`${url}/coaches/${userId}.json`, {
+			const response = await fetch(`${url}/coaches/${userId}.jso`, {
 				method: 'PUT',
 				body: JSON.stringify(coachData),
 			});

@@ -20,6 +20,8 @@ export interface ICoach {
 }
 
 export interface ICoaches {
-	coaches: ICoach[]
+	coaches: ICoach[];
+	error: null | string;
+	isLoading: boolean ;
 }
 

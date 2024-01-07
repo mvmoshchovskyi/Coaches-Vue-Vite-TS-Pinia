@@ -23,7 +23,6 @@ const {show, title, fixed} = props;
 
 const tryClose = () => {
 	if (fixed) {
-		console.log('fixed')
 		return;
 	}
 	emit('close');
