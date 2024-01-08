@@ -7,12 +7,10 @@ const props = defineProps({
 	id: String,
 });
 
-const { id } = props;
-
 const { coaches } = useCoachStore();
 
 const selectedCoach = computed(() => {
-	return coaches.find(coach => coach.id === id);
+	return coaches.find(coach => coach.id === props.id);
 });
 
 const areas = computed(()=>{
@@ -34,7 +32,7 @@ const fullName = computed(() => {
 const router = useRouter();
 
 const contactLink= computed(()=>{
-	return router.currentRoute?.value.path + '/' + id + '/contact';
+	return router.currentRoute?.value.path + '/' + props.id + '/contact';
 })
 
 </script>

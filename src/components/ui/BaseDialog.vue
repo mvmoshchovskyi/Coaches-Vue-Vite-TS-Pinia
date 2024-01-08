@@ -19,10 +19,8 @@ const props = defineProps({
 	},
 });
 
-const {show, title, fixed} = props;
-
 const tryClose = () => {
-	if (fixed) {
+	if (props.fixed) {
 		return;
 	}
 	emit('close');
@@ -33,20 +31,20 @@ const tryClose = () => {
 <template>
 	<teleport to="body">
 		<div
-			v-if="show"
+			v-if="props.show"
 			@click="tryClose"
 			class="backdrop">
 		</div>
-		<dialog open v-if="show">
+		<dialog open v-if="props.show">
 			<header>
 				<slot name="header">
-					<h2>{{ title }}</h2>
+					<h2>{{ props.title }}</h2>
 				</slot>
 			</header>
 			<section>
 				<slot></slot>
 			</section>
-			<menu v-if="!fixed">
+			<menu v-if="!props.fixed">
 				<slot name="actions">
 					<base-button
 						@click="tryClose"

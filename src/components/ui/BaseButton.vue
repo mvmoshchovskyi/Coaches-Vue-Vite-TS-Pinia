@@ -18,21 +18,19 @@ const props = defineProps({
 	},
 });
 
-const {mode, link, to} = props;
-
 </script>
 
 <template>
 	<button
-		v-if="!link"
-		:class="mode"
+		v-if="!props.link"
+		:class="props.mode"
 	>
 		<slot></slot>
 	</button>
 	<router-link
 		v-else
-		:to="to"
-		:class="mode"
+		:to="props.to"
+		:class="props.mode"
 	>
 		<slot></slot>
 	</router-link>
