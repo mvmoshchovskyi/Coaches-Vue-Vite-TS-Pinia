@@ -7,10 +7,10 @@ const props = defineProps({
 	id: String,
 });
 
-const { coaches } = useCoachStore();
+const coachStore = useCoachStore();
 
 const selectedCoach = computed(() => {
-	return coaches.find(coach => coach.id === props.id);
+	return coachStore.coaches.find(coach => coach.id === props.id);
 });
 
 const areas = computed(() => {

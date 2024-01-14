@@ -2,18 +2,18 @@
 import { useRequestsStore } from '@/stores/requests.ts';
 import RequestsItem from '@/components/requests/RequestsItem.vue';
 
-const { fetchRequests, filteredRequests, hasRequests ,error, handleError } = useRequestsStore();
+const requestsStore = useRequestsStore();
 
-fetchRequests();
+await requestsStore.fetchRequests();
 
 </script>
 
 <template>
 	<div>
 		<base-dialog
-			:show="!!error"
+			:show="!!requestsStore.error"
 			title="An error occured"
-			@close="handleError">
+			@close="requestsStore.handleError">
 
 		</base-dialog>
 		<section>
@@ -21,9 +21,9 @@ fetchRequests();
 				<header>
 					<h2>Requests Received</h2>
 				</header>
-				<ul v-if="hasRequests">
+				<ul v-if="requestsStore.hasRequests">
 					<requests-item
-						v-for="request in filteredRequests"
+						v-for="request in requestsStore.filteredRequests"
 						:id="request.id"
 						:email="request.userEmail"
 						:message="request.message">
