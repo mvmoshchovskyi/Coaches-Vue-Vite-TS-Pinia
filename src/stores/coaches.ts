@@ -9,7 +9,6 @@ export const useCoachStore = defineStore('coaches', {
 		return {
 			coaches: [],
 			error: null,
-			isLoading: false,
 		}
 	},
 	getters: {
@@ -31,16 +30,13 @@ export const useCoachStore = defineStore('coaches', {
 		},
 
 		async loadCoaches() {
-			const url = import.meta.env.VITE_FIREBASE_HTTP_COACHES;
 			const {data, error, isLoading} = await useFetch(`${url}/coaches.json`);
 			const coaches = [];
 
-			if (isLoading) {
-				this.isLoading = isLoading.value;
-			}
 			if (error) {
 				this.error = error.value;
 			}
+
 			if (data) {
 				for (const key in data.value) {
 					const coach = {
@@ -61,9 +57,9 @@ export const useCoachStore = defineStore('coaches', {
 		},
 
 		async registerCoaches(payload: any) {
-			const {userId} = useUserStore();
+			const userStore = useUserStore();
 			const coachData: ICoach = {
-				id: userId,
+				id: userStore.userId,
 				firstName: payload.first,
 				lastName: payload.last,
 				description: payload.desc,
@@ -71,22 +67,16 @@ export const useCoachStore = defineStore('coaches', {
 				areas: payload.areas,
 			} as ICoach
 
-			const url = import.meta.env.VITE_FIREBASE_HTTP_COACHES;
 			const {data, error, isLoading} = await useFetch(`${url}/coaches/${userId}.json`, {
 				method: 'PUT',
 				data: coachData,
 			});
-
-			if (isLoading) {
-				this.isLoading = isLoading.value;
-			}
 
 			if (error) {
 				this.error = error.value;
 			}
 
 			if (data) {
-				console.log(data);
 				this.registerCoach({...coachData, id: userId});
 			}
 		}

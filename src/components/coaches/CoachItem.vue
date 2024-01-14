@@ -7,16 +7,18 @@ const props = defineProps<{
 	coach: ICoach
 }>();
 
-const {firstName, lastName, hourlyRate, areas, id} = props.coach;
-
 const fullName = computed(() => {
-	return firstName + ' ' + lastName;
+	return props.coach.firstName + ' ' + props.coach.lastName;
 });
+
+const areas = computed(()=> props.coach.areas);
+
+const hourlyRate = computed(()=> props.coach.hourlyRate);
 
 const router = useRouter();
 
 const coachDetailsLink = computed(() => {
-	return `${router.currentRoute.value.path}/${id}`
+	return `${ router.currentRoute.value.path }/${props.coach.id}`
 });
 
 const coachContactLink = computed(() => {

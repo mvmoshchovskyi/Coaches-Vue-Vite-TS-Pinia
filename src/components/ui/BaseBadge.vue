@@ -6,10 +6,8 @@ const props = defineProps<{
 	area: Areas,
 }>();
 
-const { area } = props;
-
 const text = computed(() => {
-	return area.toUpperCase();
+	return props.area.toUpperCase();
 });
 
 </script>
@@ -17,7 +15,7 @@ const text = computed(() => {
 <template>
 <span
 	class="badge"
-	:class="area"
+	:class="props.area"
 >
 	{{ text }}
 </span>

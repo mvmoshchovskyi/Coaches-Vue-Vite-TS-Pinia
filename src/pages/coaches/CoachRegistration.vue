@@ -3,11 +3,11 @@ import { useRouter } from 'vue-router';
 import CoachForm from '@/pages/coaches/CoachForm.vue';
 import { useCoachStore } from '@/stores/coaches.ts';
 
-const { registerCoaches } = useCoachStore();
+const coachStore = useCoachStore();
 const router = useRouter();
 
 const saveData = (data: any) => {
-	registerCoaches(data);
+	coachStore.registerCoaches(data);
 	router.replace('/coaches');
 
 };

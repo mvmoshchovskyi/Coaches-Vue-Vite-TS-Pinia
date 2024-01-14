@@ -6,9 +6,9 @@ import CoachFilter from '@/components/coaches/CoachFilter.vue';
 import { Areas, IFilters } from '@/models/coaches.models.ts';
 import BaseDialog from '@/components/ui/BaseDialog.vue';
 
-const { coaches, hasCoaches, isCoach, loadCoaches, isLoading, error, handleError } = useCoachStore();
+const coachStore = useCoachStore();
 
-loadCoaches();
+await coachStore.loadCoaches();
 
 const activeFilters = reactive<IFilters>({
 	backend: true,
@@ -16,12 +16,8 @@ const activeFilters = reactive<IFilters>({
 	career: true,
 });
 
-const showCoaches = computed(() => {
-	return !isLoading && hasCoaches;
-});
-
 const filteredCoaches = computed(() => {
-	return coaches.filter((coach) => {
+	return coachStore.coaches.filter((coach) => {
 		return Object.keys(activeFilters).some((filter) => {
 			return activeFilters[filter as Areas]
 				&& coach.areas.includes(filter as Areas);
@@ -38,11 +34,11 @@ const setFilter = (updatedFilter: IFilters) => {
 <template>
 	<div>
 		<base-dialog
-			:show="!!error"
-			@close="handleError"
+			:show="!!coachStore.error"
+			@close="coachStore.handleError"
 			title="An error occurred"
 		>
-			<p>{{ error }}</p>
+			<p>{{ coachStore.error }}</p>
 		</base-dialog>
 		<section>
 			<coach-filter @change-filter="setFilter"></coach-filter>
@@ -52,22 +48,22 @@ const setFilter = (updatedFilter: IFilters) => {
 				<div class="controls">
 					<base-button
 						mode="outline"
-						@click="loadCoaches"
+						@click="coachStore.loadCoaches"
 					>
 						Refresh
 					</base-button>
 					<base-button
-						v-if="!isCoach && !isLoading"
+						v-if="!coachStore.isCoach"
 						:link="true"
 						to="/register"
 					>
 						Register a Coach
 					</base-button>
 				</div>
-				<div v-if="isLoading">
-					<base-spinner></base-spinner>
-				</div>
-				<ul v-else-if="showCoaches">
+<!--				<div v-if="isLoading">-->
+<!--					<base-spinner></base-spinner>-->
+<!--				</div>-->
+				<ul v-if="coachStore.hasCoaches">
 					<coach-item
 						v-for="coach in filteredCoaches"
 						:key="coach.id"
