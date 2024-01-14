@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import TheHeader from '@/components/layout/TheHeader.vue';
+import TheMain from '@/components/layout/TheMain.vue';
 
 </script>
 
@@ -7,14 +8,10 @@ import TheHeader from '@/components/layout/TheHeader.vue';
 	<the-header/>
 	<suspense>
 		<template #default>
-			<router-view v-slot="slotProps">
-				<transition name="route" mode="out-in">
-					<component :is="slotProps.Component"></component>
-				</transition>
-			</router-view>
+			<the-main/>
 		</template>
 		<template #fallback>
-			<base-spinner></base-spinner>
+			<base-spinner/>
 		</template>
 	</suspense>
 </template>

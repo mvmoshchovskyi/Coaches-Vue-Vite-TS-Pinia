@@ -30,22 +30,22 @@ export const useCoachStore = defineStore('coaches', {
 		},
 
 		async loadCoaches() {
-			const {data, error, isLoading} = await useFetch(`${url}/coaches.json`);
+			const {data, error} = await useFetch(`${url}/coaches.json`);
 			const coaches = [];
 
 			if (error) {
-				this.error = error.value;
+				this.error = error;
 			}
 
 			if (data) {
-				for (const key in data.value) {
+				for (const key in data) {
 					const coach = {
 						id: key,
-						firstName: data.value[key].firstName,
-						lastName: data.value[key].lastName,
-						description: data.value[key].description,
-						hourlyRate: data.value[key].hourlyRate,
-						areas: data.value[key].areas,
+						firstName: data[key].firstName,
+						lastName: data[key].lastName,
+						description: data[key].description,
+						hourlyRate: data[key].hourlyRate,
+						areas: data[key].areas,
 					} as ICoach;
 
 					coaches.push(coach);
@@ -67,17 +67,17 @@ export const useCoachStore = defineStore('coaches', {
 				areas: payload.areas,
 			} as ICoach
 
-			const {data, error, isLoading} = await useFetch(`${url}/coaches/${userId}.json`, {
+			const {data, error} = await useFetch(`${url}/coaches/${userStore.userId}.json`, {
 				method: 'PUT',
 				data: coachData,
 			});
 
 			if (error) {
-				this.error = error.value;
+				this.error = error;
 			}
 
 			if (data) {
-				this.registerCoach({...coachData, id: userId});
+				this.registerCoach({...coachData, id: userStore.userId});
 			}
 		}
 	},

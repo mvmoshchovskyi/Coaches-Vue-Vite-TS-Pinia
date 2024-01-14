@@ -1,4 +1,4 @@
-import { ref, computed, reactive, Ref } from 'vue';
+import { ref, Ref } from 'vue';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 
 interface UseFetchResult<T> {
@@ -21,8 +21,8 @@ export const useFetch = async <T>(url: string, config: AxiosRequestConfig = {}):
 				url,
 				...config,
 			});
-			response.value = result;
-			data.value = result.data;
+			response.value = result as any;
+			data.value = result.data as any;
 		} catch (err) {
 			error.value = err?.message || 'Something went wrong';
 		} finally {
@@ -32,7 +32,12 @@ export const useFetch = async <T>(url: string, config: AxiosRequestConfig = {}):
 
 	!config.skip && await fetch();
 
-	return { data, response, error, isLoading };
+	return {
+		data: data.value,
+		response: response.value,
+		error: error.value,
+		isLoading: isLoading.value
+	};
 };
 
 // const cacheMap = reactive(new Map());
