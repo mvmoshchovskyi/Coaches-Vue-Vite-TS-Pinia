@@ -1,12 +1,15 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import { ICoaches, ICoach } from '@/models/coaches.models.ts';
 import { useUserStore } from '@/stores/user.ts';
+import { useFetch } from '@/hooks/useFetch.ts';
 
 const url = import.meta.env.VITE_FIREBASE_HTTP_COACHES;
 export const useCoachStore = defineStore('coaches', {
 	state: (): ICoaches => {
 		return {
 			coaches: [],
+			error: null,
+			isLoading: false,
 		}
 	},
 	getters: {
@@ -23,49 +26,69 @@ export const useCoachStore = defineStore('coaches', {
 			this.coaches.push(newCoaches)
 		},
 
-		loadCoaches(responseData: any) {
-			const coaches = [];
-
-			for (const key in responseData) {
-				const coach = {
-					id: key,
-					firstName: responseData[key].firstName,
-					lastName: responseData[key].lastName,
-					description: responseData[key].description,
-					hourlyRate: responseData[key].hourlyRate,
-					areas: responseData[key].areas,
-				} as ICoach;
-
-				coaches.push(coach);
-			}
-
-			this.coaches = coaches;
+		handleError() {
+			this.error = null;
 		},
 
-		async registerCoaches(data: any) {
+		async loadCoaches() {
+			const url = import.meta.env.VITE_FIREBASE_HTTP_COACHES;
+			const {data, error, isLoading} = await useFetch(`${url}/coaches.json`);
+			const coaches = [];
+
+			if (isLoading) {
+				this.isLoading = isLoading.value;
+			}
+			if (error) {
+				this.error = error.value;
+			}
+			if (data) {
+				for (const key in data.value) {
+					const coach = {
+						id: key,
+						firstName: data.value[key].firstName,
+						lastName: data.value[key].lastName,
+						description: data.value[key].description,
+						hourlyRate: data.value[key].hourlyRate,
+						areas: data.value[key].areas,
+					} as ICoach;
+
+					coaches.push(coach);
+				}
+
+				this.coaches = coaches;
+			}
+
+		},
+
+		async registerCoaches(payload: any) {
 			const {userId} = useUserStore();
 			const coachData: ICoach = {
 				id: userId,
-				firstName: data.first,
-				lastName: data.last,
-				description: data.desc,
-				hourlyRate: data.rate,
-				areas: data.areas,
+				firstName: payload.first,
+				lastName: payload.last,
+				description: payload.desc,
+				hourlyRate: payload.rate,
+				areas: payload.areas,
 			} as ICoach
 
-			const response = await fetch(`${url}/coaches/${userId}.jso`, {
+			const url = import.meta.env.VITE_FIREBASE_HTTP_COACHES;
+			const {data, error, isLoading} = await useFetch(`${url}/coaches/${userId}.json`, {
 				method: 'PUT',
-				body: JSON.stringify(coachData),
+				data: coachData,
 			});
 
-			const responseData = await response.json();
-
-			if (!response.ok) {
-				const error = new Error(responseData.message || 'Failed to fetch');
-				throw error;
+			if (isLoading) {
+				this.isLoading = isLoading.value;
 			}
 
-			this.registerCoach({...coachData, id: userId});
+			if (error) {
+				this.error = error.value;
+			}
+
+			if (data) {
+				console.log(data);
+				this.registerCoach({...coachData, id: userId});
+			}
 		}
 	},
 })

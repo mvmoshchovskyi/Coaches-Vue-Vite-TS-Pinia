@@ -21,7 +21,7 @@ export interface ICoach {
 
 export interface ICoaches {
 	coaches: ICoach[];
-	error: null | string;
-	isLoading: boolean ;
+	error: string | null;
+	isLoading: boolean;
 }
 

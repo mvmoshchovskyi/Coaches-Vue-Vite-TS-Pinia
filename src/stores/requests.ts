@@ -1,16 +1,19 @@
 import { acceptHMRUpdate, defineStore } from 'pinia';
 import { IRequest, IRequests } from '@/models/requests.model.ts';
 import { useUserStore } from '@/stores/user.ts';
+import { useFetch } from '@/hooks/useFetch.ts';
+// import { useCoachStore } from '@/stores/coaches.ts';
 
 export const useRequestsStore = defineStore('requests', {
 	state: (): IRequests => {
 		return {
 			requests: [],
+			error: null,
 		}
 	},
 	getters: {
 		filteredRequests(state) {
-			const { userId} = useUserStore();
+			const {userId} = useUserStore();
 			return state.requests.filter(req => req.coachId === userId);
 		},
 
@@ -24,15 +27,59 @@ export const useRequestsStore = defineStore('requests', {
 			this.requests.push(request);
 		},
 
-		contactCoach(payload: any) {
-			const newRequest = {
-				id: new Date().toISOString(),
-				coachId: payload.coachId,
-				userEmail: payload.email,
-				message: payload.message,
-			} as IRequest
+		setRequests(request: IRequest) {
+			this.requests = request;
+		},
 
-			this.addRequests(newRequest);
+		handleError() {
+			this.error = null;
+		},
+
+		async contactCoach(payload: any) {
+			const newRequest = {
+				userEmail: payload.email,
+				message: payload.message
+			} as IRequest;
+
+			const url = import.meta.env.VITE_FIREBASE_HTTP_COACHES;
+			const {data, error} = await useFetch(`${url}/requests/${payload.coachId}.json`, {
+				method: 'POST',
+				data: newRequest,
+			});
+
+			if (error) {
+				this.error = error.value;
+			}
+
+			if (data) {
+				newRequest.id = data.value.name;
+				newRequest.coachId = payload.coachId;
+				this.addRequests(newRequest);
+			}
+		},
+
+		async fetchRequests() {
+			const url = import.meta.env.VITE_FIREBASE_HTTP_COACHES;
+			const coachId = useUserStore().userId;
+			const {data, error} = await useFetch(`${url}/requests/${coachId}.json`);
+
+			if (error) {
+				this.error = error.value;
+			}
+
+			const requests = [];
+
+			for (const key in data.value) {
+				const request = {
+					id: key,
+					coachId: coachId,
+					userEmail: data.value[key].userEmail,
+					message: data.value[key].message
+				};
+				requests.push(request);
+			}
+
+			this.setRequests(requests)
 		},
 	}
 })

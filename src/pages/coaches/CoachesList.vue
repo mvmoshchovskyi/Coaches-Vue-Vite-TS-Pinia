@@ -5,16 +5,10 @@ import CoachItem from '@/components/coaches/CoachItem.vue';
 import CoachFilter from '@/components/coaches/CoachFilter.vue';
 import { Areas, IFilters } from '@/models/coaches.models.ts';
 import BaseDialog from '@/components/ui/BaseDialog.vue';
-import { useFetch } from '@/hooks/useFetch.ts';
 
-const url = import.meta.env.VITE_FIREBASE_HTTP_COACHES;
-const {data, isLoading, error} = await useFetch(`${url}/coaches.js`);
+const { coaches, hasCoaches, isCoach, loadCoaches, isLoading, error, handleError } = useCoachStore();
 
-const {coaches, hasCoaches, isCoach, loadCoaches } = useCoachStore();
-
-if (data) {
-	loadCoaches(data.value)
-}
+loadCoaches();
 
 const activeFilters = reactive<IFilters>({
 	backend: true,
@@ -23,12 +17,8 @@ const activeFilters = reactive<IFilters>({
 });
 
 const showCoaches = computed(() => {
-	return !isLoading.value && hasCoaches;
+	return !isLoading && hasCoaches;
 });
-
-const handleError = () => {
-	error.value = null;
-};
 
 const filteredCoaches = computed(() => {
 	return coaches.filter((coach) => {
@@ -46,48 +36,50 @@ const setFilter = (updatedFilter: IFilters) => {
 </script>
 
 <template>
-	<base-dialog
-		:show="!!error"
-		@close="handleError"
-		title="An error occurred"
-	>
-		<p>{{ error }}</p>
-	</base-dialog>
-	<section>
-		<coach-filter @change-filter="setFilter"></coach-filter>
-	</section>
-	<section>
-		<base-card>
-			<div class="controls">
-				<base-button
-					mode="outline"
-					@click="loadCoaches"
-				>
-					Refresh
-				</base-button>
-				<base-button
-					v-if="!isCoach && !isLoading"
-					:link="true"
-					to="/register"
-				>
-					Register a Coach
-				</base-button>
-			</div>
-			<div v-if="isLoading">
-				<base-spinner></base-spinner>
-			</div>
-			<ul v-else-if="showCoaches">
-				<coach-item
-					v-for="coach in filteredCoaches"
-					:key="coach.id"
-					:coach="coach">
-				</coach-item>
-			</ul>
-			<h3 v-else>
-				No coaches found
-			</h3>
-		</base-card>
-	</section>
+	<div>
+		<base-dialog
+			:show="!!error"
+			@close="handleError"
+			title="An error occurred"
+		>
+			<p>{{ error }}</p>
+		</base-dialog>
+		<section>
+			<coach-filter @change-filter="setFilter"></coach-filter>
+		</section>
+		<section>
+			<base-card>
+				<div class="controls">
+					<base-button
+						mode="outline"
+						@click="loadCoaches"
+					>
+						Refresh
+					</base-button>
+					<base-button
+						v-if="!isCoach && !isLoading"
+						:link="true"
+						to="/register"
+					>
+						Register a Coach
+					</base-button>
+				</div>
+				<div v-if="isLoading">
+					<base-spinner></base-spinner>
+				</div>
+				<ul v-else-if="showCoaches">
+					<coach-item
+						v-for="coach in filteredCoaches"
+						:key="coach.id"
+						:coach="coach">
+					</coach-item>
+				</ul>
+				<h3 v-else>
+					No coaches found
+				</h3>
+			</base-card>
+		</section>
+	</div>
 </template>
 
 <style scoped>

@@ -26,7 +26,7 @@ const areas = reactive({
 
 const formIsValid = ref(true);
 
-const clearValidity = (data) => {
+const clearValidity = (data: any) => {
 	[data].isValid = true;
 };
 

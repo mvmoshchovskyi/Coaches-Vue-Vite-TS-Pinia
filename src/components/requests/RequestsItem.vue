@@ -6,7 +6,7 @@ const props = defineProps<{
 }>();
 
 const emailLink = () => {
-	return 'mailto:' + email
+	return 'mailto:' + props.email
 };
 
 </script>
@@ -14,8 +14,8 @@ const emailLink = () => {
 <template>
 	<li>
 		<div>
-			<a :href="emailLink">{{ email }}</a>
-			<p>{{ message }}</p>
+			<a :href="emailLink">{{ props.email }}</a>
+			<p>{{ props.message }}</p>
 		</div>
 	</li>
 </template>

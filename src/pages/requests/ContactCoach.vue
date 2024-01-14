@@ -2,12 +2,23 @@
 import { ref } from 'vue';
 import { useRequestsStore } from '@/stores/requests.ts';
 import { useRoute, useRouter } from 'vue-router';
+// import { useFetch } from '@/hooks/useFetch.ts';
+// import { useCoachStore } from '@/stores/coaches.ts';
+
+// const url = import.meta.env.VITE_FIREBASE_HTTP_COACHES;
+// const {data, isLoading, error} = await useFetch(`${url}/coaches.json`);
+//
+// const {coaches, hasCoaches, isCoach, loadCoaches} = useCoachStore();
+
+// if (data) {
+// 	loadCoaches(data.value)
+// }
 
 const email = ref('');
 const message = ref('');
 const formIsValid = ref(true);
 
-const {contactCoach} = useRequestsStore();
+const { contactCoach } = useRequestsStore();
 const route = useRoute();
 const router = useRouter();
 
@@ -22,8 +33,8 @@ const submitForm = () => {
 	}
 
 	contactCoach({
-		email,
-		message,
+		email: email.value,
+		message: message.value,
 		coachId: route?.params.id
 	})
 

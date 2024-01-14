@@ -13,15 +13,15 @@ const selectedCoach = computed(() => {
 	return coaches.find(coach => coach.id === props.id);
 });
 
-const areas = computed(()=>{
+const areas = computed(() => {
 	return selectedCoach.value?.areas;
 });
 
-const rate = computed(()=>{
+const rate = computed(() => {
 	return selectedCoach.value?.hourlyRate;
 });
 
-const description = computed(()=>{
+const description = computed(() => {
 	return selectedCoach.value?.description;
 });
 
@@ -31,38 +31,40 @@ const fullName = computed(() => {
 
 const router = useRouter();
 
-const contactLink= computed(()=>{
+const contactLink = computed(() => {
 	return router.currentRoute?.value.path + '/' + props.id + '/contact';
 })
 
 </script>
 
 <template>
-	<section>
-		<base-card>
-			<h2>{{ fullName }}</h2>
-			<h3>${{ rate }}/hour</h3>
-		</base-card>
-	</section>
-	<section>
-		<base-card>
-			<header>
-				<h2>Interested? Reach out now!</h2>
-				<base-button :link="true" :to="contactLink">Contact</base-button>
-			</header>
-			<router-view></router-view>
-		</base-card>
-	</section>
-	<section>
-		<base-card v-if="areas">
-			<base-badge
-				v-for="area in areas"
-				:area="area"
-				:key="area">
-			</base-badge>
-			<p>{{ description }}</p>
-		</base-card>
-	</section>
+	<div>
+		<section>
+			<base-card>
+				<h2>{{ fullName }}</h2>
+				<h3>${{ rate }}/hour</h3>
+			</base-card>
+		</section>
+		<section>
+			<base-card>
+				<header>
+					<h2>Interested? Reach out now!</h2>
+					<base-button :link="true" :to="contactLink">Contact</base-button>
+				</header>
+				<router-view></router-view>
+			</base-card>
+		</section>
+		<section>
+			<base-card v-if="areas">
+				<base-badge
+					v-for="area in areas"
+					:area="area"
+					:key="area">
+				</base-badge>
+				<p>{{ description }}</p>
+			</base-card>
+		</section>
+	</div>
 </template>
 
 <style scoped>

@@ -7,5 +7,6 @@ export interface IRequest {
 
 export interface IRequests {
 	requests: IRequest[],
+	error: null,
 }
 
