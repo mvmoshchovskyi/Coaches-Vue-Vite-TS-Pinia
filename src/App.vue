@@ -1,19 +1,27 @@
 <script setup lang="ts">
 import TheHeader from '@/components/layout/TheHeader.vue';
-import TheMain from '@/components/layout/TheMain.vue';
 
 </script>
 
 <template>
 	<the-header/>
-	<suspense>
-		<template #default>
-			<the-main/>
+	<router-view v-slot="{ Component }">
+		<template v-if="Component">
+			<transition name="route" mode="out-in">
+				<keep-alive>
+					<suspense>
+						<component
+							:is="Component">
+						</component>
+
+						<template #fallback>
+							<base-spinner/>
+						</template>
+					</suspense>
+				</keep-alive>
+			</transition>
 		</template>
-		<template #fallback>
-			<base-spinner/>
-		</template>
-	</suspense>
+	</router-view>
 </template>
 
 <style>
