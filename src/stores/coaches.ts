@@ -30,7 +30,7 @@ export const useCoachStore = defineStore('coaches', {
 		},
 
 		async loadCoaches() {
-			const {data, error} = await useFetch(`${url}/coaches.json`);
+			const { data, error } = await useFetch(`${url}/coaches.json`);
 			const coaches = [];
 
 			if (error) {
@@ -56,20 +56,10 @@ export const useCoachStore = defineStore('coaches', {
 
 		},
 
-		async registerCoaches(payload: any) {
-			const userStore = useUserStore();
-			const coachData: ICoach = {
-				id: userStore.userId,
-				firstName: payload.first,
-				lastName: payload.last,
-				description: payload.desc,
-				hourlyRate: payload.rate,
-				areas: payload.areas,
-			} as ICoach
-
-			const {data, error} = await useFetch(`${url}/coaches/${userStore.userId}.json`, {
+		async registerCoaches(newCoach: ICoach) {
+			const { data, error } = await useFetch(`${url}/coaches/${newCoach.id}.json`, {
 				method: 'PUT',
-				data: coachData,
+				data: newCoach,
 			});
 
 			if (error) {
@@ -77,7 +67,7 @@ export const useCoachStore = defineStore('coaches', {
 			}
 
 			if (data) {
-				this.registerCoach({...coachData, id: userStore.userId});
+				this.registerCoach({...data.value});
 			}
 		}
 	},

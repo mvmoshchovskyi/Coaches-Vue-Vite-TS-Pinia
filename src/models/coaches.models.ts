@@ -14,7 +14,7 @@ export interface ICoach {
 	id: string;
 	firstName: string;
 	lastName: string;
-	areas: Areas[],
+	areas: Areas[] | [],
 	description: string;
 	hourlyRate: number,
 }

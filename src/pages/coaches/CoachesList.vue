@@ -60,9 +60,6 @@ const setFilter = (updatedFilter: IFilters) => {
 						Register a Coach
 					</base-button>
 				</div>
-<!--				<div v-if="isLoading">-->
-<!--					<base-spinner></base-spinner>-->
-<!--				</div>-->
 				<ul v-if="coachStore.hasCoaches">
 					<coach-item
 						v-for="coach in filteredCoaches"

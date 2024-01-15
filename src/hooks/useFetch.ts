@@ -1,8 +1,18 @@
 import { reactive, toRefs } from 'vue';
-import axios from 'axios';
+import axios, { AxiosResponse,AxiosRequestConfig } from 'axios';
 
-export const useFetch = async (url: string, config = {}) => {
-	const state = reactive({
+interface UseFetchResult {
+	response: AxiosResponse | null;
+	data: any | null;
+	error: string | null;
+	isLoading: boolean;
+}
+
+interface FetchConfig extends AxiosRequestConfig {
+	skip?: boolean;
+}
+export const useFetch = async (url: string, config: FetchConfig = {}): Promise<any> => {
+	const state: UseFetchResult = reactive({
 		response: null,
 		data: null,
 		error: null,
@@ -18,16 +28,20 @@ export const useFetch = async (url: string, config = {}) => {
 			});
 			state.response = result;
 			state.data = result.data;
-		} catch (err) {
-			state.error = err?.message || 'Something went wrong';
+		} catch (err: unknown) {
+			if (err instanceof Error) {
+				state.error = err.message || 'Something went wrong';
+			} else {
+				state.error = 'An unknown error occurred';
+			}
 		} finally {
 			state.isLoading = false;
 		}
 	};
 
-	!config.skip && await fetchData();
+	!config?.skip && await fetchData();
 
-	return {...toRefs(state), fetchData};
+	return {...toRefs(state), fetchData };
 };
 
 // const cacheMap = reactive(new Map());

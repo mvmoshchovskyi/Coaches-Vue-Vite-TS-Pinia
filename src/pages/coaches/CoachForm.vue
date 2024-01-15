@@ -1,37 +1,45 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
+import { Areas, ICoach } from '@/models/coaches.models.ts';
+import { useUserStore } from '@/stores/user.ts';
+
+interface FormData {
+	val: string | number | null | Areas[];
+	isValid: boolean;
+}
 
 const emit = defineEmits(['save-data']);
 
-const firstName = reactive({
+const firstName: FormData = reactive({
 	val: '',
 	isValid: true,
 });
-const lastName = reactive({
+const lastName: FormData = reactive({
 	val: '',
 	isValid: true,
 });
-const description = reactive({
+const description: FormData = reactive({
 	val: '',
 	isValid: true,
 });
-const rate = reactive({
+const rate: FormData = reactive({
 	val: null,
 	isValid: true,
 });
-const areas = reactive({
+const areas: FormData = reactive({
 	val: [],
 	isValid: true,
 });
 
 const formIsValid = ref(true);
 
-const clearValidity = (data: any) => {
-	[data].isValid = true;
+const clearValidity = (data: FormData) => {
+	data.isValid = true;
 };
 
 const validateForm = () => {
 	formIsValid.value = true;
+
 	if (firstName.val === '') {
 		firstName.isValid = false;
 		formIsValid.value = false;
@@ -44,11 +52,11 @@ const validateForm = () => {
 		description.isValid = false;
 		formIsValid.value = false;
 	}
-	if (!rate.val || rate.val < 1) {
+	if (typeof rate.val !== 'number' || rate.val < 1) {
 		rate.isValid = false;
-		rate.value = false;
+		formIsValid.value = false;
 	}
-	if (areas.val.length === 0) {
+	if (!Array.isArray(areas.val) || areas.val.length === 0) {
 		areas.isValid = false;
 		formIsValid.value = false;
 	}
@@ -62,13 +70,20 @@ const submitForm = async () => {
 		return;
 	}
 
-	const formData = {
-		first: firstName.val,
-		last: lastName.val,
-		desc: description.val,
-		rate: rate.val,
-		areas: areas.val
-	}
+	const areasValue = Array.isArray(areas.val) && areas.val.some(area => Object.values(Areas).includes(area))
+		? areas.val
+		: [];
+
+	const userStore = useUserStore();
+
+	const formData: ICoach = {
+		id: userStore.userId,
+		firstName: String(firstName.val),
+		lastName: String(lastName.val),
+		description: String(description.val),
+		hourlyRate: rate.val as number,
+		areas: areasValue,
+	};
 
 	emit('save-data', formData);
 };
@@ -87,7 +102,7 @@ const submitForm = async () => {
 			<input type="text" id="lastname" v-model.trim="lastName.val" @blur="clearValidity(lastName)">
 			<p v-if="!lastName.isValid">Lastname must not be empty.</p>
 		</div>
-		<div class="form-control" :class="{invalid: !description.isValid}" @blur="clearValidity">
+		<div class="form-control" :class="{invalid: !description.isValid}">
 			<label for="description">Description</label>
 			<textarea id="description" v-model.trim="description.val" @blur="clearValidity(description)"></textarea>
 			<p v-if="!description.isValid">Description must not be empty.</p>

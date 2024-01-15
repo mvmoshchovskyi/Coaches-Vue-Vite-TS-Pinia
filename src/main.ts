@@ -14,8 +14,15 @@ app
 
 registerGlobals(app);
 
-app.config.errorHandler = (error) => {
-	console.log(error)
+// Global error handler
+app.config.errorHandler = (error, instance, info) => {
+
+	// Handle the error globally
+	console.error("Global error:", error);
+	console.log("Vue instance:", instance);
+	console.log("Error info:", info);
+
+	// Add code for UI notifications, reporting or other error handling logic
 };
 
 app.mount('#app');

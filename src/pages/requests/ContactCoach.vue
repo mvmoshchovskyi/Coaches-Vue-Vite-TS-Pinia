@@ -27,7 +27,7 @@ const submitForm = () => {
 		coachId: route?.params.id
 	})
 
-	router.replace('/coaches');
+	router.replace('/requests');
 };
 </script>
 
