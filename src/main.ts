@@ -14,4 +14,8 @@ app
 
 registerGlobals(app);
 
+app.config.errorHandler = (error) => {
+	console.log(error)
+};
+
 app.mount('#app');

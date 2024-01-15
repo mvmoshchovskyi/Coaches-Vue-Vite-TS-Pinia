@@ -1,43 +1,33 @@
-import { ref, Ref } from 'vue';
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import { reactive, toRefs } from 'vue';
+import axios from 'axios';
 
-interface UseFetchResult<T> {
-	data: Ref<T | null>;
-	response: Ref<AxiosResponse<T> | null>;
-	error: Ref<string | null>;
-	isLoading: Ref<boolean>;
-}
+export const useFetch = async (url: string, config = {}) => {
+	const state = reactive({
+		response: null,
+		data: null,
+		error: null,
+		isLoading: false,
+	})
 
-export const useFetch = async <T>(url: string, config: AxiosRequestConfig = {}): Promise<UseFetchResult<T>> => {
-	const data = ref<T | null>(null);
-	const response = ref<AxiosResponse<T> | null>(null);
-	const error = ref<string | null>(null);
-	const isLoading = ref<boolean>(false);
-
-	const fetch = async () => {
-		isLoading.value = true;
+	const fetchData = async () => {
+		state.isLoading = true;
 		try {
-			const result = await axios.request<T>({
+			const result = await axios.request({
 				url,
 				...config,
 			});
-			response.value = result as any;
-			data.value = result.data as any;
+			state.response = result;
+			state.data = result.data;
 		} catch (err) {
-			error.value = err?.message || 'Something went wrong';
+			state.error = err?.message || 'Something went wrong';
 		} finally {
-			isLoading.value = false;
+			state.isLoading = false;
 		}
 	};
 
-	!config.skip && await fetch();
+	!config.skip && await fetchData();
 
-	return {
-		data: data.value,
-		response: response.value,
-		error: error.value,
-		isLoading: isLoading.value
-	};
+	return {...toRefs(state), fetchData};
 };
 
 // const cacheMap = reactive(new Map());

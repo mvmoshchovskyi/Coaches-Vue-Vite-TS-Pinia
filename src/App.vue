@@ -8,7 +8,7 @@ import TheHeader from '@/components/layout/TheHeader.vue';
 	<router-view v-slot="{ Component }">
 		<template v-if="Component">
 			<transition name="route" mode="out-in">
-				<keep-alive>
+<!--				<keep-alive>-->
 					<suspense>
 						<component
 							:is="Component">
@@ -18,7 +18,7 @@ import TheHeader from '@/components/layout/TheHeader.vue';
 							<base-spinner/>
 						</template>
 					</suspense>
-				</keep-alive>
+<!--				</keep-alive>-->
 			</transition>
 		</template>
 	</router-view>

@@ -14,7 +14,7 @@ await requestsStore.fetchRequests();
 			:show="!!requestsStore.error"
 			title="An error occured"
 			@close="requestsStore.handleError">
-
+			<p>{{ requestsStore.error }}</p>
 		</base-dialog>
 		<section>
 			<base-card>

@@ -34,18 +34,18 @@ export const useCoachStore = defineStore('coaches', {
 			const coaches = [];
 
 			if (error) {
-				this.error = error;
+				this.error = error.value;
 			}
 
 			if (data) {
-				for (const key in data) {
+				for (const key in data.value) {
 					const coach = {
 						id: key,
-						firstName: data[key].firstName,
-						lastName: data[key].lastName,
-						description: data[key].description,
-						hourlyRate: data[key].hourlyRate,
-						areas: data[key].areas,
+						firstName: data.value[key].firstName,
+						lastName: data.value[key].lastName,
+						description: data.value[key].description,
+						hourlyRate: data.value[key].hourlyRate,
+						areas: data.value[key].areas,
 					} as ICoach;
 
 					coaches.push(coach);
@@ -73,7 +73,7 @@ export const useCoachStore = defineStore('coaches', {
 			});
 
 			if (error) {
-				this.error = error;
+				this.error = error.value;
 			}
 
 			if (data) {

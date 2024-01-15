@@ -48,11 +48,11 @@ export const useRequestsStore = defineStore('requests', {
 			});
 
 			if (error) {
-				this.error = error;
+				this.error = error.value;
 			}
 
 			if (data) {
-				newRequest.id = data.name;
+				newRequest.id = data.value?.name;
 				newRequest.coachId = payload.coachId;
 				this.addRequests(newRequest);
 			}
@@ -64,17 +64,17 @@ export const useRequestsStore = defineStore('requests', {
 			const {data, error} = await useFetch(`${url}/requests/${coachId}.json`);
 
 			if (error) {
-				this.error = error;
+				this.error = error.value;
 			}
 
 			const requests = [];
 
-			for (const key in data) {
+			for (const key in data.value) {
 				const request = {
 					id: key,
 					coachId: coachId,
-					userEmail: data[key].userEmail,
-					message: data[key].message
+					userEmail: data.value[key].userEmail,
+					message: data.value[key].message
 				};
 				requests.push(request);
 			}
