@@ -57,7 +57,8 @@ export const useCoachStore = defineStore('coaches', {
 		},
 
 		async registerCoaches(newCoach: ICoach) {
-			const { data, error } = await useFetch(`${url}/coaches/${newCoach.id}.json`, {
+			const authStore = useAuthStore();
+			const { data, error } = await useFetch(`${url}/coaches/${newCoach.id}.json?auth=${authStore.token}`, {
 				method: 'PUT',
 				data: newCoach,
 			});

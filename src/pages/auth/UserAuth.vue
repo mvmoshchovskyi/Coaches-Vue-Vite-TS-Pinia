@@ -6,9 +6,9 @@ import BaseDialog from '@/components/ui/BaseDialog.vue';
 const email = ref('');
 const password = ref('');
 const formIsValid = ref(true);
-const mode = ref('mode');
+const mode = ref('login');
 
-const {error, isLoading} = toRefs(useAuthStore());
+const {error, isLoading, login , signup} = toRefs(useAuthStore());
 
 const submitForm = async () => {
 	if (email.value === '' && !email.value.includes('@') && password.value.length < 6) {
@@ -16,13 +16,15 @@ const submitForm = async () => {
 		return;
 	}
 
+	const userData = {
+		email: email.value,
+		password: password.value,
+	};
+
 	if (mode.value === 'login') {
-		await useAuthStore().login();
+		await login.value(userData);
 	} else {
-		await useAuthStore().signup({
-			email: email.value,
-			password: password.value,
-		});
+		await signup.value(userData);
 	}
 };
 

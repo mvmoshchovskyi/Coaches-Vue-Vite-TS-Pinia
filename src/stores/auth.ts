@@ -15,8 +15,14 @@ export const useAuthStore = defineStore('auth', {
 		}
 	},
 
+	getters: {
+		isAuthenticated(): boolean {
+			return !!this.token
+		},
+	},
+
 	actions: {
-		async signup(payload : Partial<IUser>) {
+		async signup(payload: Partial<IUser>) {
 			const newUser = {
 				email: payload.email,
 				password: payload.password,
@@ -44,8 +50,35 @@ export const useAuthStore = defineStore('auth', {
 		},
 
 
-		login() {
+		async login(payload: Partial<IUser>) {
+			const newUser = {
+				email: payload.email,
+				password: payload.password,
+				returnSecureToken: true,
+			}
+			const url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${WEB_API_KEY}`;
+			const { data, error, isLoading } = await useFetch(url, {
+				method: 'post',
+				data: newUser,
+			});
 
+			if (isLoading.value) {
+				this.isLoading = isLoading.value;
+			}
+
+			if (error.value) {
+				this.error = error.value;
+			}
+
+			if (data.value) {
+				this.token = data.value.idToken;
+				this.userId = data.value.localId;
+				this.tokenExpiration = data.value.expiresIn;
+			}
+		},
+
+		logout() {
+			this.$reset();
 		},
 	}
 })

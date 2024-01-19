@@ -1,4 +1,16 @@
 <script setup lang="ts">
+import { useAuthStore } from '@/stores/auth.ts';
+import { computed } from 'vue';
+
+const authStore = useAuthStore();
+
+const isLoggedIn = computed(() => {
+	return authStore.isAuthenticated;
+});
+
+const logout = () => {
+	authStore.logout();
+};
 
 </script>
 
@@ -6,14 +18,26 @@
 	<header>
 		<nav>
 			<h1>
-				<router-link to="/" > Find a Coach</router-link>
+				<router-link to="/"> Find a Coach</router-link>
 			</h1>
 			<ul>
 				<li>
 					<router-link to="/coaches">All coaches</router-link>
 				</li>
-				<li>
-					<router-link to="/requests">Requests</router-link>
+				<li v-if="isLoggedIn">
+					<router-link to="/requests">
+						Requests
+					</router-link>
+				</li>
+				<li v-else>
+					<router-link to="/auth">
+						Login
+					</router-link>
+				</li>
+				<li v-if="isLoggedIn">
+					<base-button @click="logout">
+						Logout
+					</base-button>
 				</li>
 			</ul>
 		</nav>

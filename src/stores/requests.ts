@@ -2,6 +2,7 @@ import { acceptHMRUpdate, defineStore } from 'pinia';
 import { IRequest, IRequests } from '@/models/requests.model.ts';
 import { useAuthStore } from '@/stores/auth.ts';
 import { useFetch } from '@/hooks/useFetch.ts';
+import { toRefs } from 'vue';
 
 const url = import.meta.env.VITE_FIREBASE_HTTP_COACHES;
 
@@ -60,8 +61,10 @@ export const useRequestsStore = defineStore('requests', {
 
 		async fetchRequests() {
 
-			const coachId = useAuthStore().userId;
-			const {data, error} = await useFetch(`${url}/requests/${coachId}.json`);
+			const authStore = useAuthStore();
+			const {userId, token} = toRefs(authStore);
+
+			const {data, error} = await useFetch(`${url}/requests/${userId.value}.json?auth=${token.value}`);
 
 			if (error) {
 				this.error = error.value;
@@ -72,14 +75,14 @@ export const useRequestsStore = defineStore('requests', {
 			for (const key in data.value) {
 				const request = {
 					id: key,
-					coachId: coachId,
+					coachId: userId,
 					userEmail: data.value[key].userEmail,
 					message: data.value[key].message
 				};
 				requests.push(request);
 			}
 
-			this.setRequests(requests)
+			this.setRequests(requests )
 		},
 	}
 })
