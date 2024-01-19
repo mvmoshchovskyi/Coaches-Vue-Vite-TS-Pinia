@@ -29,7 +29,7 @@ export const useAuthStore = defineStore('auth', {
 				returnSecureToken: true,
 			}
 			const url = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${WEB_API_KEY}`;
-			const {data, error, isLoading} = await useFetch(url, {
+			const { data, error, isLoading } = await useFetch(url, {
 				method: 'post',
 				data: newUser,
 			});

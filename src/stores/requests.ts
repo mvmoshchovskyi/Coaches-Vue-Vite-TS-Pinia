@@ -2,7 +2,6 @@ import { acceptHMRUpdate, defineStore } from 'pinia';
 import { IRequest, IRequests } from '@/models/requests.model.ts';
 import { useAuthStore } from '@/stores/auth.ts';
 import { useFetch } from '@/hooks/useFetch.ts';
-import { toRefs } from 'vue';
 
 const url = import.meta.env.VITE_FIREBASE_HTTP_COACHES;
 
@@ -29,10 +28,6 @@ export const useRequestsStore = defineStore('requests', {
 			this.requests.push(request);
 		},
 
-		setRequests(request: IRequest[]) {
-			this.requests = request;
-		},
-
 		handleError() {
 			this.error = null;
 		},
@@ -43,7 +38,7 @@ export const useRequestsStore = defineStore('requests', {
 				message: payload.message
 			} as IRequest;
 
-			const { data, error} = await useFetch(`${url}/requests/${payload.coachId}.json`, {
+			const { data, error } = await useFetch(`${url}/requests/${payload.coachId}.json`, {
 				method: 'POST',
 				data: newRequest,
 			});
@@ -62,9 +57,8 @@ export const useRequestsStore = defineStore('requests', {
 		async fetchRequests() {
 
 			const authStore = useAuthStore();
-			const {userId, token} = toRefs(authStore);
 
-			const {data, error} = await useFetch(`${url}/requests/${userId.value}.json?auth=${token.value}`);
+			const { data, error } = await useFetch(`${url}/requests/${authStore.userId}.json?auth=${authStore.token}`);
 
 			if (error) {
 				this.error = error.value;
@@ -75,14 +69,14 @@ export const useRequestsStore = defineStore('requests', {
 			for (const key in data.value) {
 				const request = {
 					id: key,
-					coachId: userId,
-					userEmail: data.value[key].userEmail,
-					message: data.value[key].message
+					coachId: authStore.userId,
+					userEmail: data.value[key].userEmail as string,
+					message: data.value[key].message as string,
 				};
 				requests.push(request);
 			}
 
-			this.setRequests(requests )
+			this.requests = requests
 		},
 	}
 })
