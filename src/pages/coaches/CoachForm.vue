@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
 import { Areas, ICoach } from '@/models/coaches.models.ts';
-import { useUserStore } from '@/stores/user.ts';
+import { useAuthStore } from '@/stores/auth.ts';
 
 interface FormData {
 	val: string | number | null | Areas[];
@@ -74,7 +74,7 @@ const submitForm = async () => {
 		? areas.val
 		: [];
 
-	const userStore = useUserStore();
+	const userStore = useAuthStore();
 
 	const formData: ICoach = {
 		id: userStore.userId,

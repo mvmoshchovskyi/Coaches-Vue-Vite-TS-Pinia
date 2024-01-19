@@ -28,6 +28,7 @@ export const useFetch = async (url: string, config: FetchConfig = {}): Promise<a
 			});
 			state.response = result;
 			state.data = result.data;
+
 		} catch (err: unknown) {
 			if (err instanceof Error) {
 				state.error = err.message || 'Something went wrong';

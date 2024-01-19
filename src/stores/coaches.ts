@@ -1,6 +1,6 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import { ICoaches, ICoach } from '@/models/coaches.models.ts';
-import { useUserStore } from '@/stores/user.ts';
+import { useAuthStore } from '@/stores/auth.ts';
 import { useFetch } from '@/hooks/useFetch.ts';
 
 const url = import.meta.env.VITE_FIREBASE_HTTP_COACHES;
@@ -15,7 +15,7 @@ export const useCoachStore = defineStore('coaches', {
 		hasCoaches: (state: ICoaches) => state.coaches && state.coaches.length > 0,
 
 		isCoach: (state: ICoaches) => {
-			const {userId} = useUserStore();
+			const {userId} = useAuthStore();
 			return state.coaches.some((coach) => coach.id === userId);
 		},
 
