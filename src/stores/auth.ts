@@ -3,6 +3,7 @@ import { IAuth, IUser } from '@/models/user.model.ts';
 import { useFetch } from '@/hooks/useFetch.ts';
 
 const WEB_API_KEY = import.meta.env.VITE_WEB_API_KEY;
+const HTTP_AUTH = import.meta.env.VITE_FIREBASE_HTTP_AUTH;
 
 let timer: number;
 
@@ -27,7 +28,7 @@ export const useAuthStore = defineStore('auth', {
 		async auth(payload: any) {
 			const action = payload.mode === 'signup' ? 'signUp' : 'signInWithPassword';
 
-			const url = `https://identitytoolkit.googleapis.com/v1/accounts:${action}?key=${WEB_API_KEY}`;
+			const url = `${HTTP_AUTH}:${action}?key=${WEB_API_KEY}`;
 
 			const user = {
 				email: payload.email,
@@ -48,9 +49,7 @@ export const useAuthStore = defineStore('auth', {
 				this.error = error.value;
 			}
 
-
 			if (data.value) {
-				// const expiresIn = 5000;
 				const expiresIn = +data.value.expiresIn * 1000;
 				const expirationDate = (new Date().getTime() + expiresIn).toString();
 
