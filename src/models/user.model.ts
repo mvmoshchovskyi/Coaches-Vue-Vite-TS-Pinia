@@ -1,9 +1,9 @@
 export interface IAuth {
 	userId: string | null;
 	token: string | null;
-	tokenExpiration: string | null;
 	error: string | null;
 	isLoading: boolean;
+	didAutoLogout: boolean;
 }
 
 export interface IUser {

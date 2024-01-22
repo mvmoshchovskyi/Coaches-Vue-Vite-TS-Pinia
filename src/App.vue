@@ -1,10 +1,21 @@
 <script setup lang="ts">
 import TheHeader from '@/components/layout/TheHeader.vue';
 import { useAuthStore } from '@/stores/auth.ts';
+import { toRefs, watch } from 'vue';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const authStore = useAuthStore();
 
+const {didAutoLogout} = toRefs(authStore);
+
 authStore.tryLogin();
+
+watch(didAutoLogout, (curVal, oldValue) => {
+	if (curVal && curVal !== oldValue) {
+		router.replace('/coaches');
+	}
+});
 
 </script>
 

@@ -4,14 +4,16 @@ import { useFetch } from '@/hooks/useFetch.ts';
 
 const WEB_API_KEY = import.meta.env.VITE_WEB_API_KEY;
 
+let timer: number;
+
 export const useAuthStore = defineStore('auth', {
 	state: (): IAuth => {
 		return {
 			userId: null,
 			token: null,
-			tokenExpiration: null,
 			error: null,
 			isLoading: false,
+			didAutoLogout: false,
 		}
 	},
 
@@ -46,24 +48,45 @@ export const useAuthStore = defineStore('auth', {
 				this.error = error.value;
 			}
 
-			localStorage.setItem('token', data.value.idToken);
-			localStorage.setItem('userId', data.value.localId);
 
 			if (data.value) {
+				// const expiresIn = 5000;
+				const expiresIn = +data.value.expiresIn * 1000;
+				const expirationDate = (new Date().getTime() + expiresIn).toString();
+
+				timer = setTimeout(() => {
+					this.autoLogout();
+				}, expiresIn);
+
+				localStorage.setItem('token', data.value.idToken);
+				localStorage.setItem('userId', data.value.localId);
+				localStorage.setItem('tokenExpiration', expirationDate);
+
 				this.token = data.value.idToken;
 				this.userId = data.value.localId;
-				this.tokenExpiration = data.value.expiresIn;
+				this.didAutoLogout = false;
 			}
 		},
 
 		tryLogin() {
 			const token = localStorage.getItem('token');
 			const userId = localStorage.getItem('userId');
+			const tokenExpiration = localStorage.getItem('tokenExpiration');
+
+			const expiresIn = tokenExpiration ? (+tokenExpiration - new Date().getTime()) : 0;
+
+			if (expiresIn <= 0) {
+				return;
+			}
+
+			timer = setTimeout(() => {
+				this.autoLogout();
+			}, expiresIn)
 
 			if (token && userId) {
 				this.token = token;
 				this.userId = userId;
-				this.tokenExpiration = null;
+				this.didAutoLogout = false;
 			}
 
 		},
@@ -80,7 +103,16 @@ export const useAuthStore = defineStore('auth', {
 		logout() {
 			localStorage.removeItem('token');
 			localStorage.removeItem('userId');
+			localStorage.removeItem('tokenExpiration');
+
+			clearTimeout(timer);
+
 			this.$reset();
+		},
+
+		autoLogout() {
+			this.logout();
+			this.didAutoLogout = true;
 		},
 	}
 })
