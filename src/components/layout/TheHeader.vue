@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth.ts';
 import { computed } from 'vue';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const authStore = useAuthStore();
 
 const isLoggedIn = computed(() => {
@@ -10,6 +12,7 @@ const isLoggedIn = computed(() => {
 
 const logout = () => {
 	authStore.logout();
+	router.replace('/register');
 };
 
 </script>

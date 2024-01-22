@@ -1,5 +1,10 @@
 <script setup lang="ts">
 import TheHeader from '@/components/layout/TheHeader.vue';
+import { useAuthStore } from '@/stores/auth.ts';
+
+const authStore = useAuthStore();
+
+authStore.tryLogin();
 
 </script>
 
@@ -8,17 +13,17 @@ import TheHeader from '@/components/layout/TheHeader.vue';
 	<router-view v-slot="{ Component }">
 		<template v-if="Component">
 			<transition name="route" mode="out-in">
-<!--				<keep-alive>-->
-					<suspense>
-						<component
-							:is="Component">
-						</component>
+				<!--				<keep-alive>-->
+				<suspense>
+					<component
+						:is="Component">
+					</component>
 
-						<template #fallback>
-							<base-spinner/>
-						</template>
-					</suspense>
-<!--				</keep-alive>-->
+					<template #fallback>
+						<base-spinner/>
+					</template>
+				</suspense>
+				<!--				</keep-alive>-->
 			</transition>
 		</template>
 	</router-view>

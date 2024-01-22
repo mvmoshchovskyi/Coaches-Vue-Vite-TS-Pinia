@@ -2,6 +2,7 @@
 import { computed, ref, toRefs } from 'vue';
 import { useAuthStore } from '@/stores/auth.ts';
 import BaseDialog from '@/components/ui/BaseDialog.vue';
+import { useRoute, useRouter } from 'vue-router';
 
 const email = ref('');
 const password = ref('');
@@ -9,6 +10,8 @@ const formIsValid = ref(true);
 const mode = ref('login');
 
 const {error, isLoading, login , signup} = toRefs(useAuthStore());
+const router = useRouter();
+const route = useRoute();
 
 const submitForm = async () => {
 	if (email.value === '' && !email.value.includes('@') && password.value.length < 6) {
@@ -26,6 +29,8 @@ const submitForm = async () => {
 	} else {
 		await signup.value(userData);
 	}
+	const redirectUrl = '/' + (route.query?.redirect || 'coaches');
+	router.replace(redirectUrl);
 };
 
 const submitButtonCaption = computed(() => {

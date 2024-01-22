@@ -60,9 +60,9 @@ const setFilter = (updatedFilter: IFilters) => {
 					<base-button
 						v-if="!authStore.isAuthenticated"
 						:link="true"
-						to="/auth"
+						to="/auth?redirect=register"
 					>
-						Login
+						Login to register as coach
 					</base-button>
 					<base-button
 						v-if="showRegisterBtn"

@@ -22,16 +22,20 @@ export const useAuthStore = defineStore('auth', {
 	},
 
 	actions: {
-		async signup(payload: Partial<IUser>) {
-			const newUser = {
+		async auth(payload: any) {
+			const action = payload.mode === 'signup' ? 'signUp' : 'signInWithPassword';
+
+			const url = `https://identitytoolkit.googleapis.com/v1/accounts:${action}?key=${WEB_API_KEY}`;
+
+			const user = {
 				email: payload.email,
 				password: payload.password,
 				returnSecureToken: true,
-			}
-			const url = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${WEB_API_KEY}`;
-			const { data, error, isLoading } = await useFetch(url, {
+			};
+
+			const {data, error, isLoading} = await useFetch(url, {
 				method: 'post',
-				data: newUser,
+				data: user,
 			});
 
 			if (isLoading.value) {
@@ -42,42 +46,40 @@ export const useAuthStore = defineStore('auth', {
 				this.error = error.value;
 			}
 
+			localStorage.setItem('token', data.value.idToken);
+			localStorage.setItem('userId', data.value.localId);
+
 			if (data.value) {
 				this.token = data.value.idToken;
 				this.userId = data.value.localId;
 				this.tokenExpiration = data.value.expiresIn;
 			}
+		},
+
+		tryLogin() {
+			const token = localStorage.getItem('token');
+			const userId = localStorage.getItem('userId');
+
+			if (token && userId) {
+				this.token = token;
+				this.userId = userId;
+				this.tokenExpiration = null;
+			}
+
+		},
+
+		async signup(payload: Partial<IUser>) {
+			return this.auth({...payload, mode: 'signup'})
 		},
 
 
 		async login(payload: Partial<IUser>) {
-			const newUser = {
-				email: payload.email,
-				password: payload.password,
-				returnSecureToken: true,
-			}
-			const url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${WEB_API_KEY}`;
-			const { data, error, isLoading } = await useFetch(url, {
-				method: 'post',
-				data: newUser,
-			});
-
-			if (isLoading.value) {
-				this.isLoading = isLoading.value;
-			}
-
-			if (error.value) {
-				this.error = error.value;
-			}
-
-			if (data.value) {
-				this.token = data.value.idToken;
-				this.userId = data.value.localId;
-				this.tokenExpiration = data.value.expiresIn;
-			}
+			return this.auth({...payload, mode: 'login'});
 		},
 
 		logout() {
+			localStorage.removeItem('token');
+			localStorage.removeItem('userId');
 			this.$reset();
 		},
 	}
